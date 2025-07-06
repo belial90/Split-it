@@ -384,6 +384,15 @@ button:active {
     flex-direction: column;
     width: 100%;
     gap: 1rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .aspect-container {
+    justify-content: center;
+    width: 100%;
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--main-light);
   }
   .warning {
     margin-bottom: 10px;
