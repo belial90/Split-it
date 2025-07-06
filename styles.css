@@ -33,6 +33,12 @@ body {
   max-width: 40rem;
   text-align: center;
   margin: 2rem 0;
+  transition: width 0.3s ease-out;
+}
+
+.logo.shrink {
+  width: 10rem;
+  margin: 0.5rem 0;
 }
 
 h1 {
@@ -95,7 +101,7 @@ p {
   transition:
     opacity 0.4s ease,
     transform 0.4s ease;
-  display: flex column;
+  display: block;
   justify-content: center;
   align-content: flex-start;
   align-items: center;
@@ -110,24 +116,77 @@ p {
 }
 
 .workbench {
-  border-radius: 20px;
+  border-radius: 30px;
   margin-bottom: 3rem;
   background-color: white;
   box-shadow: 0 10px 30px var(--main-light);
-  padding: 10px 10px 30px;
+  padding: 10px 10px 0;
+  background-image: radial-gradient(var(--main-light) 1.3px, transparent 0);
+  background-size: 20px 20px;
+  background-position: -19px -19px;
 }
 
 .aspect-container {
+  color: var(--main-dark);
+  display: flex;
+  flex-direction: row;
   width: 200px;
+  flex-grow: 2;
+  align-content: center;
+  align-items: center;
+  gap: 0.5rem;
 }
+
+.aspect-selector {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  background-color: var(--main-light);
+  border-radius: 100px;
+  padding: 5px;
+  vertical-align: middle;
+  align-items: center;
+}
+
+.aspect-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  color: var(--main-dark);
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.aspect-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.aspect-option input[type="radio"] ~ span {
+  padding: 5px 10px;
+  border-radius: 100px;
+}
+
+.aspect-option input[type="radio"]:checked ~ span {
+  color: var(--main-accent);
+  background-color: white;
+  padding: 5px 10px;
+  border-radius: 100px;
+}
+
 #controls {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   margin-bottom: 1rem;
-  padding: 10px;
+  padding: 0;
+  padding-bottom: 1rem;
   border-bottom: 1px solid var(--main-light);
+  background-color: white;
 }
 
 #controls label {
@@ -144,23 +203,31 @@ p {
 #column-group {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: end;
   color: var(--main-dark);
-  flex-grow: 2;
-
+  flex-grow: 1;
   text-align: center;
 }
 
 #column-group button {
   border: 0;
   background-color: var(--main-light);
-  padding: 10px;
+  padding: 5px;
   border-radius: 100px;
   width: 50px;
+  font-size: 20px;
+  color: var(--main-dark);
 }
 
 button {
   transition: all 0.2s;
+  margin: 1rem auto;
+  text-align: center;
+  border: 0;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.34);
+  color: var(--main-dark);
+  border-radius: 100px;
 }
 button:hover {
   transform: scale(1.1);
@@ -170,15 +237,20 @@ button:active {
   transform: scale(0.9);
 }
 
+.main-button-container {
+  width: 100%;
+  text-align: center;
+}
 #split-btn {
   padding: 10px 20px;
   background-color: var(--main-accent);
   color: white;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
   border-radius: 100px;
-  border: 0;
-  width: 200px;
+  margin-top: 2rem;
+  text-align: center;
+  margin-bottom: -40px;
 }
 /* ensure it’s hidden initially */
 #progress-container {
@@ -230,43 +302,53 @@ button:active {
   border-radius: 0.25rem;
 }
 
-/* Preview canvas: full-width, auto height, with guide CSS vars */
 #preview {
   width: 100%;
   height: auto;
   display: block;
 
-  /* default guide styling */
   --guide-width: 3px;
 }
 
 .preview-container {
-  margin-bottom: 50px;
+  margin-bottom: 1rem;
   text-align: center;
 }
+
 #slice-previews {
   display: flex;
-  gap: 0.2rem;
   justify-content: center;
+  align-items: center;
+  gap: 2px;
+  padding: 0.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* each thumbnail canvas */
 #slice-previews canvas {
-  border: 1px solid #ccc;
-  object-fit: cover;
-  background: #fafafa;
-  border-radius: 5px;
+  flex: 0 0 auto;
+  width: 90px;
+  height: auto;
 }
 
-#reset-btn {
-  margin: 1rem auto;
-  text-align: center;
-  border: 0;
-  padding: 10px;
-  background-color: rgba(255, 255, 255, 0.34);
-  color: var(--main-dark);
-  border-radius: 100px;
+#slice-previews canvas:first-child {
+  border-radius: 10px 0 0 10px;
 }
+#slice-previews canvas:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+#slice-previews::-webkit-scrollbar {
+  height: 6px;
+}
+#slice-previews::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+#slice-previews::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .warning {
   color: var(--main-dark);
   font-size: 0.95rem;
@@ -278,7 +360,7 @@ button:active {
   backdrop-filter: blur(10px);
   border: 1px solid white;
   transition: all 0.2s;
-  max-width: 250px;
+  max-width: 310px;
   margin: auto;
   margin-bottom: -20px;
 }
@@ -290,6 +372,7 @@ button:active {
   text-align: center;
   border-top: 1px solid var(--main-light);
   padding: 10px;
+  margin-top: 1rem;
 }
 
 /* MOBILE */
@@ -305,4 +388,15 @@ button:active {
   .warning {
     margin-bottom: 10px;
   }
+}
+
+textarea,
+input.text,
+input[type="text"],
+input[type="button"],
+input[type="submit"],
+.input-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
 }

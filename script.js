@@ -5,7 +5,6 @@ const dropArea = document.getElementById("drop-area");
 const fileInput = document.getElementById("file-input");
 const fileBtn = document.getElementById("file-btn");
 const preview = document.getElementById("preview");
-const aspectSel = document.getElementById("aspect");
 const minusCol = document.getElementById("minus-col");
 const plusCol = document.getElementById("plus-col");
 const colCount = document.getElementById("col-count");
@@ -24,20 +23,24 @@ const GUIDE_OVERFLOW = 80;
 // Hide progress UI on load
 progressContainer.classList.remove("active");
 
+// Helper to read current aspect‐ratio radio value
+function getAspectValue() {
+  return document.querySelector('input[name="aspect"]:checked').value;
+}
+
+// --- Seam warning logic ---
 function checkSeamlessSplitWarning() {
   const warning = document.getElementById("seam-warning");
   if (!img.naturalWidth || !img.naturalHeight) return;
 
-  const [targetW, targetH] = aspectSel.value.split("x").map(Number);
+  const [targetW, targetH] = getAspectValue().split("x").map(Number);
   const imageAspect = img.naturalWidth / img.naturalHeight;
   const targetAspect = targetW / targetH;
-
-  // Minimum columns needed to match the target aspect ratio without cropping
   const minColumns = Math.ceil(imageAspect / targetAspect);
 
   if (columns < minColumns) {
     warning.hidden = false;
-    warning.textContent = `⚠️ To preserve seamless splits, use at least ${minColumns} column${minColumns > 1 ? "s" : ""}.`;
+    warning.textContent = `⚠️ You should use at least ${minColumns} column${minColumns > 1 ? "s" : ""}.`;
   } else {
     warning.hidden = true;
   }
@@ -56,7 +59,7 @@ function onDragLeave(e) {
 dropArea.addEventListener("dragenter", onDragOver);
 dropArea.addEventListener("dragover", onDragOver);
 dropArea.addEventListener("dragleave", onDragLeave);
-dropArea.addEventListener("drop", (e) => {
+dropArea.addEventListener("drop", e => {
   e.preventDefault();
   onDragLeave(e);
   if (e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]);
@@ -64,7 +67,7 @@ dropArea.addEventListener("drop", (e) => {
 
 // --- File upload button ---
 fileBtn.addEventListener("click", () => fileInput.click());
-fileInput.addEventListener("change", (e) => {
+fileInput.addEventListener("change", e => {
   if (e.target.files.length) loadFile(e.target.files[0]);
 });
 
@@ -78,17 +81,17 @@ function loadFile(file) {
       drawPreview();
       splitBtn.disabled = false;
 
-      // Show workspace and hide drop area
       dropArea.classList.add("hidden");
       workspace.classList.add("visible");
+      document.querySelector(".logo")?.classList.add("shrink");
     };
     img.src = reader.result;
   };
   reader.readAsDataURL(file);
-    checkSeamlessSplitWarning();
+  checkSeamlessSplitWarning();
 }
 
-// --- Draw preview + guides + thumbnails ---
+// --- Draw preview + guides ---
 function drawPreview() {
   preview.width = img.naturalWidth;
   preview.height = img.naturalHeight + 2 * GUIDE_OVERFLOW;
@@ -117,13 +120,13 @@ function drawPreview() {
   }
 
   updateSlicePreviews();
-    checkSeamlessSplitWarning();
+  checkSeamlessSplitWarning();
 }
 
-// --- Thumbnails ---
+// --- Thumbnails preview ---
 function updateSlicePreviews() {
   previewContainer.innerHTML = "";
-  const [targetW, targetH] = aspectSel.value.split("x").map(Number);
+  const [targetW, targetH] = getAspectValue().split("x").map(Number);
   const sliceW = img.naturalWidth / columns;
   const sliceH = img.naturalHeight;
 
@@ -160,9 +163,15 @@ plusCol.addEventListener("click", () => {
     drawPreview();
   }
 });
-aspectSel.addEventListener("change", () => {
-  if (img.src) drawPreview();
-});
+
+// --- Radio change handlers (new aspect inputs) ---
+document
+  .querySelectorAll('input[name="aspect"]')
+  .forEach(radio =>
+    radio.addEventListener("change", () => {
+      if (img.src) drawPreview();
+    })
+  );
 
 // --- Split & download with progress ---
 splitBtn.addEventListener("click", async () => {
@@ -172,7 +181,7 @@ splitBtn.addEventListener("click", async () => {
   progressContainer.classList.add("active");
 
   const zip = new JSZip();
-  const [, hStr] = aspectSel.value.split("x");
+  const [, hStr] = getAspectValue().split("x");
   const targetH = Number(hStr);
   const sliceW = img.naturalWidth / columns;
   const sliceH = img.naturalHeight;
@@ -190,16 +199,16 @@ splitBtn.addEventListener("click", async () => {
     const dy = (targetH - dh) / 2;
 
     oc.drawImage(img, sliceW * i, 0, sliceW, sliceH, dx, dy, dw, dh);
-    const blob = await new Promise((res) => off.toBlob(res, "image/jpeg", 0.9));
+    const blob = await new Promise(res => off.toBlob(res, "image/jpeg", 0.9));
     zip.file(`${i + 1}.jpg`, blob);
   }
 
-  zip.generateAsync({ type: "blob" }, (meta) => {
+  zip.generateAsync({ type: "blob" }, meta => {
     const p = Math.floor(meta.percent);
     progressBar.value = p;
     progressText.textContent = p + "%";
   })
-  .then((content) => saveAs(content, "carousel.zip"))
+  .then(content => saveAs(content, "carousel.zip"))
   .finally(() => {
     progressContainer.classList.remove("active");
     splitBtn.disabled = false;

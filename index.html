@@ -22,27 +22,20 @@
         </div>
 
         <div id="workspace" class="hidden">
-            <div class="preview-container">
-                <h3>Preview</h3>
-                <div id="slice-previews"></div>
-                <button id="reset-btn" type="button">Reset</button>
-                <div id="progress-container">
-                    <div class="spinner"></div>
-                    <progress id="progress-bar" max="100" value="0"></progress>
-                    <span id="progress-text">0%</span>
-                </div>
-            </div>
-
             <h3>Settings</h3>
             <div class="workbench">
                 <div id="controls">
                     <div class="aspect-container">
-                        <!-- Aspect select with its own label -->
-                        <label for="aspect">Aspect Ratio:</label>
-                        <select id="aspect">
-                            <option value="1080x1350">Vertical 4:5 (1080×1350)</option>
-                            <option value="1080x1080">Square (1080×1080)</option>
-                        </select>
+                        <div class="aspect-selector">
+                            <label class="aspect-option">
+                                <input type="radio" name="aspect" value="1080x1350" checked />
+                                <span>4:5</span>
+                            </label>
+                            <label class="aspect-option">
+                                <input type="radio" name="aspect" value="1080x1080" />
+                                <span>1:1</span>
+                            </label>
+                        </div>
                     </div>
 
                     <!-- Columns grouped in a fieldset -->
@@ -52,18 +45,26 @@
                         <span id="col-count">3</span>
                         <button id="plus-col" type="button">+</button>
                     </div>
-
-                    <div>
-                        <button id="split-btn" disabled>Split and download</button>
-                    </div>
                 </div>
                 <p id="seam-warning" class="warning" hidden></p>
 
                 <canvas id="preview"></canvas>
+                <div class="main-button-container">
+                    <div id="progress-container">
+                        <progress id="progress-bar" max="100" value="0"></progress>
+                    </div>
+                    <button id="split-btn" disabled>Split and download</button>
+                </div>
+            </div>
+
+            <div class="preview-container">
+                <h3>Preview</h3>
+                <div id="slice-previews"></div>
+                <button id="reset-btn" type="button">Reset</button>
             </div>
         </div>
 
-        <p class="legal">Dario Crisafulli ©2025 – Version 1.0</p>
+        <p class="legal">Dario Crisafulli ©2025 – Version 1.1</p>
         <!-- Libraries -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.8.0/jszip.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
