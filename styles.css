@@ -1,0 +1,308 @@
+/* FONTS */
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Oi&display=swap");
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* VARIABLES */
+:root {
+  --main-bg-color: #fffcf9;
+  --main-accent: #ff8000;
+  --main-light: #f2ebe4;
+  --main-medium: #ded2c6;
+  --main-dark: #806c57;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  padding: 1rem;
+  max-width: 1000px;
+  margin: auto;
+  background-color: var(--main-bg-color);
+  background: linear-gradient(180deg, rgba(242, 235, 228, 1) 0%, rgba(255, 252, 249, 1) 100%);
+}
+
+.header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.logo {
+  width: 100%;
+  max-width: 40rem;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+h1 {
+  font-family: "Instrument Serif", sans-serif;
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: 500;
+  font-size: 6em;
+  color: var(--main-accent);
+}
+
+h2 {
+  color: var(--main-dark);
+  font-weight: 500;
+  font-size: 1em;
+  text-align: center;
+}
+
+h3 {
+  font-family: "Instrument Serif", serif;
+  text-align: center;
+  color: var(--main-dark);
+  font-weight: 500;
+  font-size: 2em;
+  margin-bottom: 1rem;
+}
+
+p {
+  color: var(--main-dark);
+  text-align: center;
+}
+#drop-area {
+  border: 2.5px dashed var(--main-medium);
+  max-width: 600px;
+  padding: 2rem;
+  text-align: center;
+  margin: 5rem auto;
+  cursor: pointer;
+  border-radius: 100px;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+#drop-area.hidden {
+  display: none;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
+
+#drop-area.dragover {
+  border-color: #666;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+#workspace {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+  display: flex column;
+  justify-content: center;
+  align-content: flex-start;
+  align-items: center;
+  height: 100vh;
+  gap: 1rem;
+}
+
+#workspace.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.workbench {
+  border-radius: 20px;
+  margin-bottom: 3rem;
+  background-color: white;
+  box-shadow: 0 10px 30px var(--main-light);
+  padding: 10px 10px 30px;
+}
+
+.aspect-container {
+  width: 200px;
+}
+#controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 10px;
+  border-bottom: 1px solid var(--main-light);
+}
+
+#controls label {
+  display: flex;
+  align-items: center;
+  color: var(--main-dark);
+}
+
+#controls select,
+#controls button {
+  margin: 0 0.5rem;
+}
+
+#column-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--main-dark);
+  flex-grow: 2;
+
+  text-align: center;
+}
+
+#column-group button {
+  border: 0;
+  background-color: var(--main-light);
+  padding: 10px;
+  border-radius: 100px;
+  width: 50px;
+}
+
+button {
+  transition: all 0.2s;
+}
+button:hover {
+  transform: scale(1.1);
+}
+
+button:active {
+  transform: scale(0.9);
+}
+
+#split-btn {
+  padding: 10px 20px;
+  background-color: var(--main-accent);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 100px;
+  border: 0;
+  width: 200px;
+}
+/* ensure it’s hidden initially */
+#progress-container {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 500px;
+  margin: auto;
+  margin-top: 3rem;
+}
+
+/* when .active is on, show it */
+#progress-container.active {
+  display: flex;
+}
+
+/* spinner & progress-bar styles remain the same */
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#progress-bar {
+  flex-grow: 1;
+  height: 0.5rem;
+  appearance: none;
+}
+
+#progress-bar::-webkit-progress-bar {
+  background: #eee;
+  border-radius: 0.25rem;
+}
+#progress-bar::-webkit-progress-value {
+  background: var(--main-accent);
+  border-radius: 0.25rem;
+}
+#progress-bar::-moz-progress-bar {
+  background: var(--main-accent);
+  border-radius: 0.25rem;
+}
+
+/* Preview canvas: full-width, auto height, with guide CSS vars */
+#preview {
+  width: 100%;
+  height: auto;
+  display: block;
+
+  /* default guide styling */
+  --guide-width: 3px;
+}
+
+.preview-container {
+  margin-bottom: 50px;
+  text-align: center;
+}
+#slice-previews {
+  display: flex;
+  gap: 0.2rem;
+  justify-content: center;
+}
+
+/* each thumbnail canvas */
+#slice-previews canvas {
+  border: 1px solid #ccc;
+  object-fit: cover;
+  background: #fafafa;
+  border-radius: 5px;
+}
+
+#reset-btn {
+  margin: 1rem auto;
+  text-align: center;
+  border: 0;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.34);
+  color: var(--main-dark);
+  border-radius: 100px;
+}
+.warning {
+  color: var(--main-dark);
+  font-size: 0.95rem;
+  text-align: center;
+  background-color: #ffffffa7;
+  box-shadow: 0 5px 20px #c5bfb9;
+  padding: 10px;
+  border-radius: 150px;
+  backdrop-filter: blur(10px);
+  border: 1px solid white;
+  transition: all 0.2s;
+  max-width: 250px;
+  margin: auto;
+  margin-bottom: -20px;
+}
+
+.legal {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--main-medium);
+  text-align: center;
+  border-top: 1px solid var(--main-light);
+  padding: 10px;
+}
+
+/* MOBILE */
+@media screen and (max-width: 480px) {
+  .logo {
+    width: 20rem;
+  }
+  #controls {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+  }
+  .warning {
+    margin-bottom: 10px;
+  }
+}

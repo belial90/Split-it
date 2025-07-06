@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Split it!</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <div class="header">
+            <img src="logo.svg" class="logo" />
+            <h2>
+                Split your image and create your Instagram carousel.<br />
+                Simply select your columns and click the button!
+            </h2>
+        </div>
+
+        <div id="drop-area">
+            <p>Drop an image here</p>
+            <button id="file-btn">Upload Image</button>
+            <input type="file" id="file-input" accept="image/*" hidden />
+        </div>
+
+        <div id="workspace" class="hidden">
+            <div class="preview-container">
+                <h3>Preview</h3>
+                <div id="slice-previews"></div>
+                <button id="reset-btn" type="button">Reset</button>
+                <div id="progress-container">
+                    <div class="spinner"></div>
+                    <progress id="progress-bar" max="100" value="0"></progress>
+                    <span id="progress-text">0%</span>
+                </div>
+            </div>
+
+            <h3>Settings</h3>
+            <div class="workbench">
+                <div id="controls">
+                    <div class="aspect-container">
+                        <!-- Aspect select with its own label -->
+                        <label for="aspect">Aspect Ratio:</label>
+                        <select id="aspect">
+                            <option value="1080x1350">Vertical 4:5 (1080×1350)</option>
+                            <option value="1080x1080">Square (1080×1080)</option>
+                        </select>
+                    </div>
+
+                    <!-- Columns grouped in a fieldset -->
+                    <div id="column-group">
+                        <div>Columns:</div>
+                        <button id="minus-col" type="button">−</button>
+                        <span id="col-count">3</span>
+                        <button id="plus-col" type="button">+</button>
+                    </div>
+
+                    <div>
+                        <button id="split-btn" disabled>Split and download</button>
+                    </div>
+                </div>
+                <p id="seam-warning" class="warning" hidden></p>
+
+                <canvas id="preview"></canvas>
+            </div>
+        </div>
+
+        <p class="legal">Dario Crisafulli ©2025 – Version 1.0</p>
+        <!-- Libraries -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.8.0/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>
