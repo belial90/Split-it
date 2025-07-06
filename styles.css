@@ -32,7 +32,7 @@ body {
   width: 100%;
   max-width: 40rem;
   text-align: center;
-  margin: 2rem 0;
+  margin: 5rem 0;
   transition: width 0.3s ease-out;
 }
 
@@ -49,11 +49,19 @@ h1 {
   font-size: 6em;
   color: var(--main-accent);
 }
-
+#description {
+  max-width: 300px;
+  margin: auto;
+}
+#description.hidden {
+  display: none;
+  transform: translateY(-20px);
+  pointer-events: none;
+}
 h2 {
   color: var(--main-dark);
-  font-weight: 500;
-  font-size: 1em;
+  font-weight: 400;
+  font-size: 0.9em;
   text-align: center;
 }
 
@@ -95,13 +103,12 @@ p {
 }
 
 #workspace {
-  opacity: 0;
+  display: none;
   transform: translateY(20px);
   pointer-events: none;
   transition:
     opacity 0.4s ease,
     transform 0.4s ease;
-  display: block;
   justify-content: center;
   align-content: flex-start;
   align-items: center;
@@ -109,7 +116,7 @@ p {
 }
 
 #workspace.visible {
-  opacity: 1;
+  display: block;
   transform: translateY(0);
   pointer-events: auto;
 }
@@ -227,6 +234,7 @@ button {
   background-color: rgba(255, 255, 255, 0.34);
   color: var(--main-dark);
   border-radius: 100px;
+  font-size: 0.9rem;
 }
 button:hover {
   transform: scale(1.1);
@@ -352,16 +360,13 @@ button:active {
   color: var(--main-dark);
   font-size: 0.95rem;
   text-align: center;
-  background-color: #ffffffa7;
-  box-shadow: 0 5px 20px #c5bfb9;
+  background-color: #fff5e3;
   padding: 10px;
   border-radius: 150px;
-  backdrop-filter: blur(10px);
   border: 1px solid white;
   transition: all 0.2s;
   max-width: 310px;
-  margin: auto;
-  margin-bottom: -20px;
+  margin: 1rem auto;
 }
 
 .legal {

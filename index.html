@@ -1,18 +1,21 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="manifest" href="/site.webmanifest" />
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Split it!</title>
+        <title>Split it</title>
         <link rel="stylesheet" href="styles.css" />
     </head>
     <body>
         <div class="header">
-            <img src="logo.svg" class="logo" />
-            <h2>
-                Split your image and create your Instagram carousel.<br />
-                Simply select your columns and click the button!
-            </h2>
+            <a href="/"><img src="logo.svg" class="logo" /></a>
+            <div id="description">
+                <h2>Image splitter for your Instagram carousel. Start by uploading your image.</h2>
+            </div>
         </div>
 
         <div id="drop-area">
@@ -64,7 +67,7 @@
             </div>
         </div>
 
-        <p class="legal">Dario Crisafulli ©2025 – Version 1.1</p>
+        <p class="legal">Dario Crisafulli ©2025 – Version 1.1.2</p>
         <!-- Libraries -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.8.0/jszip.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>

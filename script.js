@@ -12,9 +12,9 @@ const splitBtn = document.getElementById("split-btn");
 const previewContainer = document.getElementById("slice-previews");
 const progressContainer = document.getElementById("progress-container");
 const progressBar = document.getElementById("progress-bar");
-const progressText = document.getElementById("progress-text");
 const resetBtn = document.getElementById("reset-btn");
 const workspace = document.getElementById("workspace");
+const description = document.getElementById("description");
 
 let img = new Image();
 let columns = 3;
@@ -23,7 +23,7 @@ const GUIDE_OVERFLOW = 80;
 // Hide progress UI on load
 progressContainer.classList.remove("active");
 
-// Helper to read current aspect‐ratio radio value
+// Helper to read current aspect-ratio radio value
 function getAspectValue() {
   return document.querySelector('input[name="aspect"]:checked').value;
 }
@@ -81,6 +81,7 @@ function loadFile(file) {
       drawPreview();
       splitBtn.disabled = false;
 
+      description.classList.add("hidden");
       dropArea.classList.add("hidden");
       workspace.classList.add("visible");
       document.querySelector(".logo")?.classList.add("shrink");
@@ -164,7 +165,7 @@ plusCol.addEventListener("click", () => {
   }
 });
 
-// --- Radio change handlers (new aspect inputs) ---
+// --- Radio change handlers (aspect inputs) ---
 document
   .querySelectorAll('input[name="aspect"]')
   .forEach(radio =>
@@ -173,11 +174,10 @@ document
     })
   );
 
-// --- Split & download with progress ---
+// --- Split & download with progress bar only ---
 splitBtn.addEventListener("click", async () => {
   splitBtn.disabled = true;
   progressBar.value = 0;
-  progressText.textContent = "0%";
   progressContainer.classList.add("active");
 
   const zip = new JSZip();
@@ -204,9 +204,7 @@ splitBtn.addEventListener("click", async () => {
   }
 
   zip.generateAsync({ type: "blob" }, meta => {
-    const p = Math.floor(meta.percent);
-    progressBar.value = p;
-    progressText.textContent = p + "%";
+    progressBar.value = Math.floor(meta.percent);
   })
   .then(content => saveAs(content, "carousel.zip"))
   .finally(() => {
@@ -215,7 +213,7 @@ splitBtn.addEventListener("click", async () => {
   });
 });
 
-// --- Reset button ---
+// --- Reset ---
 resetBtn.addEventListener("click", () => {
   location.reload();
 });
