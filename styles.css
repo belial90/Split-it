@@ -114,6 +114,10 @@ input[type="submit"],
   border-radius: 0;
 }
 
+.hidden {
+  display: none;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    DESCRIPTION & VISIBILITY CLASSES
 ───────────────────────────────────────────────────────────────────────────── */
@@ -387,6 +391,24 @@ button:active {
 #progress-bar::-moz-progress-bar {
   background: var(--main-accent);
   border-radius: 0.25rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   JOB COMPLETE MESSAGE
+───────────────────────────────────────────────────────────────────────────── */
+.job-complete {
+  text-align: center;
+  color: var(--main-dark);
+  margin: auto;
+  animation: fadeBounce 0.4s ease-out forwards;
+}
+.job-complete h2 {
+  font-size: 3rem;
+  font-family: "Instrument Serif";
+  text-transform: uppercase;
+}
+.job-complete img {
+  width: 150px;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
