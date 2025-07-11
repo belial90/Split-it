@@ -15,6 +15,9 @@ const progressBar = document.getElementById("progress-bar");
 const resetBtn = document.getElementById("reset-btn");
 const workspace = document.getElementById("workspace");
 const description = document.getElementById("description");
+const warningMsg = document.getElementById("seam-warning");
+const successMsg = document.getElementById("seam-success");
+const seamNote = document.getElementById("seam-note");
 
 let img = new Image();
 let columns = 3;
@@ -23,27 +26,59 @@ const GUIDE_OVERFLOW = 80;
 // Hide progress UI on load
 progressContainer.classList.remove("active");
 
-// Helper to read current aspect-ratio radio value
+// --- Helpers ---
 function getAspectValue() {
   return document.querySelector('input[name="aspect"]:checked').value;
 }
 
-// --- Seam warning logic ---
-function checkSeamlessSplitWarning() {
-  const warning = document.getElementById("seam-warning");
-  if (!img.naturalWidth || !img.naturalHeight) return;
-
+function getRecommendedColumns() {
+  if (!img.naturalWidth || !img.naturalHeight) return 3;
   const [targetW, targetH] = getAspectValue().split("x").map(Number);
   const imageAspect = img.naturalWidth / img.naturalHeight;
   const targetAspect = targetW / targetH;
-  const minColumns = Math.ceil(imageAspect / targetAspect);
+  return Math.ceil(imageAspect / targetAspect);
+}
 
-  if (columns < minColumns) {
-    warning.hidden = false;
-    warning.textContent = `⚠️ You should use at least ${minColumns} column${minColumns > 1 ? "s" : ""}.`;
+// Show feedback: success, warning or note
+function checkSeamlessSplitFeedback() {
+  const minCols = getRecommendedColumns();
+
+  // hide & reset animations
+  [warningMsg, successMsg, seamNote].forEach((el) => {
+    el.hidden = true;
+    el.style.animation = "";
+  });
+
+  if (columns < minCols) {
+    // warning state
+    warningMsg.hidden = false;
+    // pull template from HTML data‐attribute, replace {n}
+    const tpl = warningMsg.dataset.template;
+    warningMsg.textContent = tpl.replace("{n}", minCols);
+    requestAnimationFrame(() => {
+      warningMsg.style.animation = "fadeBounce 0.4s ease-out forwards";
+    });
+  } else if (columns > minCols) {
+    // note state
+    seamNote.hidden = false;
+    const tpl = seamNote.dataset.template;
+    seamNote.textContent = tpl.replace("{n}", minCols);
+    requestAnimationFrame(() => {
+      seamNote.style.animation = "fadeBounce 0.4s ease-out forwards";
+    });
   } else {
-    warning.hidden = true;
+    // success state
+    successMsg.hidden = false;
+    requestAnimationFrame(() => {
+      successMsg.style.animation = "fadeBounce 0.4s ease-out forwards";
+    });
   }
+}
+
+// Disable/enable – and style – the ± buttons
+function updateColumnButtons() {
+  minusCol.classList.toggle("disabled", columns <= 2);
+  plusCol.classList.toggle("disabled", columns >= 10);
 }
 
 // --- Drag & drop handlers ---
@@ -59,7 +94,7 @@ function onDragLeave(e) {
 dropArea.addEventListener("dragenter", onDragOver);
 dropArea.addEventListener("dragover", onDragOver);
 dropArea.addEventListener("dragleave", onDragLeave);
-dropArea.addEventListener("drop", e => {
+dropArea.addEventListener("drop", (e) => {
   e.preventDefault();
   onDragLeave(e);
   if (e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]);
@@ -67,20 +102,29 @@ dropArea.addEventListener("drop", e => {
 
 // --- File upload button ---
 fileBtn.addEventListener("click", () => fileInput.click());
-fileInput.addEventListener("change", e => {
+fileInput.addEventListener("change", (e) => {
   if (e.target.files.length) loadFile(e.target.files[0]);
 });
 
-// --- Load image & size canvas ---
+// --- Load image & prepare preview ---
 function loadFile(file) {
   const reader = new FileReader();
   reader.onload = () => {
     img.onload = () => {
+      // set recommended columns before drawing
+      columns = getRecommendedColumns();
+      colCount.textContent = columns;
+
       preview.width = img.naturalWidth;
       preview.height = img.naturalHeight + 2 * GUIDE_OVERFLOW;
-      drawPreview();
-      splitBtn.disabled = false;
 
+      // defer draw until layout is applied
+      requestAnimationFrame(() => {
+        drawPreview();
+        updateColumnButtons();
+      });
+
+      splitBtn.disabled = false;
       description.classList.add("hidden");
       dropArea.classList.add("hidden");
       workspace.classList.add("visible");
@@ -89,28 +133,27 @@ function loadFile(file) {
     img.src = reader.result;
   };
   reader.readAsDataURL(file);
-  checkSeamlessSplitWarning();
 }
 
-// --- Draw preview + guides ---
+// --- Draw main preview + guides ---
 function drawPreview() {
   preview.width = img.naturalWidth;
   preview.height = img.naturalHeight + 2 * GUIDE_OVERFLOW;
 
   const ctx = preview.getContext("2d");
   const cs = getComputedStyle(preview);
-  const color = cs.getPropertyValue("--main-accent").trim() || "rgba(255,255,255,0.8)";
-  const guideWidthCSS = parseFloat(cs.getPropertyValue("--guide-width")) || 2;
+  const color = cs.getPropertyValue("--main-accent").trim() || "#000";
+  const guideWidth = parseFloat(cs.getPropertyValue("--guide-width")) || 2;
 
-  const displayWidth = preview.clientWidth;
-  const scaleFactor = preview.width / displayWidth;
-  const adjustedLineWidth = guideWidthCSS * scaleFactor;
+  const displayW = preview.clientWidth || preview.width;
+  const scaleFactor = preview.width / displayW;
+  const lineWidth = guideWidth * scaleFactor;
 
   ctx.clearRect(0, 0, preview.width, preview.height);
   ctx.drawImage(img, 0, GUIDE_OVERFLOW, img.naturalWidth, img.naturalHeight);
 
   ctx.strokeStyle = color;
-  ctx.lineWidth = adjustedLineWidth;
+  ctx.lineWidth = lineWidth;
 
   for (let i = 1; i < columns; i++) {
     const x = (preview.width / columns) * i;
@@ -121,27 +164,27 @@ function drawPreview() {
   }
 
   updateSlicePreviews();
-  checkSeamlessSplitWarning();
+  checkSeamlessSplitFeedback();
 }
 
-// --- Thumbnails preview ---
+// --- Thumbnail previews ---
 function updateSlicePreviews() {
   previewContainer.innerHTML = "";
-  const [targetW, targetH] = getAspectValue().split("x").map(Number);
+  const [tW, tH] = getAspectValue().split("x").map(Number);
   const sliceW = img.naturalWidth / columns;
   const sliceH = img.naturalHeight;
 
   for (let i = 0; i < columns; i++) {
     const thumb = document.createElement("canvas");
-    const displaySize = 80;
-    thumb.width = displaySize;
-    thumb.height = Math.round(displaySize * (targetH / targetW));
+    const size = 80;
+    thumb.width = size;
+    thumb.height = Math.round(size * (tH / tW));
     const tc = thumb.getContext("2d");
 
-    const scale = Math.max(thumb.width / sliceW, thumb.height / sliceH);
+    const scale = Math.max(size / sliceW, thumb.height / sliceH);
     const dw = sliceW * scale;
     const dh = sliceH * scale;
-    const dx = (thumb.width - dw) / 2;
+    const dx = (size - dw) / 2;
     const dy = (thumb.height - dh) / 2;
 
     tc.drawImage(img, sliceW * i, 0, sliceW, sliceH, dx, dy, dw, dh);
@@ -155,6 +198,7 @@ minusCol.addEventListener("click", () => {
     columns--;
     colCount.textContent = columns;
     drawPreview();
+    updateColumnButtons();
   }
 });
 plusCol.addEventListener("click", () => {
@@ -162,19 +206,23 @@ plusCol.addEventListener("click", () => {
     columns++;
     colCount.textContent = columns;
     drawPreview();
+    updateColumnButtons();
   }
 });
 
-// --- Radio change handlers (aspect inputs) ---
-document
-  .querySelectorAll('input[name="aspect"]')
-  .forEach(radio =>
-    radio.addEventListener("change", () => {
-      if (img.src) drawPreview();
-    })
-  );
+// --- Aspect‐ratio change handler ---
+document.querySelectorAll('input[name="aspect"]').forEach((radio) =>
+  radio.addEventListener("change", () => {
+    if (img.src) {
+      columns = getRecommendedColumns();
+      colCount.textContent = columns;
+      drawPreview();
+      updateColumnButtons();
+    }
+  })
+);
 
-// --- Split & download with progress bar only ---
+// --- Split & download ZIP ---
 splitBtn.addEventListener("click", async () => {
   splitBtn.disabled = true;
   progressBar.value = 0;
@@ -199,7 +247,7 @@ splitBtn.addEventListener("click", async () => {
     const dy = (targetH - dh) / 2;
 
     oc.drawImage(img, sliceW * i, 0, sliceW, sliceH, dx, dy, dw, dh);
-    const blob = await new Promise(res => off.toBlob(res, "image/jpeg", 0.9));
+    const blob = await new Promise((res) => off.toBlob(res, "image/jpeg", 0.9));
     zip.file(`${i + 1}.jpg`, blob);
   }
 
@@ -211,9 +259,16 @@ splitBtn.addEventListener("click", async () => {
     progressContainer.classList.remove("active");
     splitBtn.disabled = false;
   });
+  zip
+    .generateAsync({ type: "blob" }, (meta) => {
+      progressBar.value = Math.floor(meta.percent);
+    })
+    .then((content) => saveAs(content, "carousel.zip"))
+    .finally(() => {
+      progressContainer.classList.remove("active");
+      splitBtn.disabled = false;
+    });
 });
 
 // --- Reset ---
-resetBtn.addEventListener("click", () => {
-  location.reload();
-});
+resetBtn.addEventListener("click", () => location.reload());
