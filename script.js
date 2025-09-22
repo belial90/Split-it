@@ -224,7 +224,8 @@ splitBtn.addEventListener("click", async () => {
   progressContainer.classList.add("active");
 
   const zip = new JSZip();
-  const [, hStr] = getAspectValue().split("x");
+  const [wStr, hStr] = getAspectValue().split("x");
+  const targetW = Number(wStr);
   const targetH = Number(hStr);
   const sliceW = img.naturalWidth / columns;
   const sliceH = img.naturalHeight;
@@ -232,14 +233,14 @@ splitBtn.addEventListener("click", async () => {
   // create slices
   for (let i = 0; i < columns; i++) {
     const off = document.createElement("canvas");
-    off.width = 1080;
+    off.width = targetW;
     off.height = targetH;
     const oc = off.getContext("2d");
 
-    const scale = Math.max(1080 / sliceW, targetH / sliceH);
+    const scale = Math.max(targetW / sliceW, targetH / sliceH);
     const dw = sliceW * scale;
     const dh = sliceH * scale;
-    const dx = (1080 - dw) / 2;
+    const dx = (targetW - dw) / 2;
     const dy = (targetH - dh) / 2;
 
     oc.drawImage(img, sliceW * i, 0, sliceW, sliceH, dx, dy, dw, dh);
