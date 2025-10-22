@@ -348,14 +348,13 @@ button:active {
 /* ─────────────────────────────────────────────────────────────────────────────
    PROGRESS
 ───────────────────────────────────────────────────────────────────────────── */
-/* ensure it’s hidden initially */
+/* ensure it's hidden initially */
 #progress-container {
   display: none;
   align-items: center;
   gap: 0.5rem;
   max-width: 500px;
-  margin: auto;
-  margin-top: 3rem;
+  margin: 3rem auto 0;
 }
 
 /* when .active is on, show it */

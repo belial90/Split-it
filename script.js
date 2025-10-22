@@ -101,6 +101,12 @@ fileInput.addEventListener("change", (e) => {
 
 // --- Load image & prepare preview ---
 function loadFile(file) {
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    alert('Please select a valid image file.');
+    return;
+  }
+  
   const reader = new FileReader();
   reader.onload = () => {
     img.onload = () => {
@@ -126,7 +132,13 @@ function loadFile(file) {
       workspace.classList.add("visible");
       document.querySelector(".logo")?.classList.add("shrink");
     };
+    img.onerror = () => {
+      alert('Failed to load image. Please try a different file.');
+    };
     img.src = reader.result;
+  };
+  reader.onerror = () => {
+    alert('Failed to read file. Please try again.');
   };
   reader.readAsDataURL(file);
 }
