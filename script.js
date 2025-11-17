@@ -113,6 +113,24 @@ function loadFile(file) {
       // reset any previous "job complete"
       jobComplete?.classList.add("hidden");
 
+      // auto-select aspect ratio based on image height
+      const height = img.naturalHeight;
+      let aspectValue;
+      if (height === 1440) {
+        aspectValue = "1080x1440"; // 3:4
+      } else if (height === 1350) {
+        aspectValue = "1080x1350"; // 4:5
+      } else if (height === 1080) {
+        aspectValue = "1080x1080"; // 1:1
+      }
+      
+      if (aspectValue) {
+        const aspectRadio = document.querySelector(`input[name="aspect"][value="${aspectValue}"]`);
+        if (aspectRadio) {
+          aspectRadio.checked = true;
+        }
+      }
+
       // set recommended columns & UI
       columns = getRecommendedColumns();
       colCount.textContent = columns;
