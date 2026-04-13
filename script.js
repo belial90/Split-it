@@ -301,3 +301,11 @@ splitBtn.addEventListener("click", async () => {
 resetBtn.addEventListener("click", () => {
   location.reload();
 });
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch((error) => {
+      console.error("Service worker registration failed:", error);
+    });
+  });
+}
