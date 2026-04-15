@@ -1,96 +1,94 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
-        <link rel="manifest" href="site.webmanifest" />
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#ff8000" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Split it" />
-        <meta name="description" content="Split your images into Instagram carousel posts. Upload an image and get perfectly sized slices for your Instagram feed." />
-        <title>Split it - Image Splitter for Instagram Carousel</title>
-        <link rel="stylesheet" href="styles.css" />
-    </head>
-    <body>
-        <div class="header">
-            <a href="#"><img src="logo.svg" class="logo" alt="Split it" /></a>
-            <div id="description">
-                <h2>Image splitter for your Instagram carousel. Start by uploading your image.</h2>
-            </div>
+
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ff8000" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Split it" />
+    <meta name="description"
+        content="Split your images into Instagram carousel posts. Upload an image and get perfectly sized slices for your Instagram feed." />
+    <title>Split it - Image Splitter for Instagram Carousel</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div class="header">
+        <a href="#"><img src="logo.svg" class="logo" alt="Split it" /></a>
+        <div id="description">
+            <h1>Split your Instagram carousel</h1>
         </div>
+    </div>
 
-        <div class="job-complete hidden">
-            <img src="fireworks.webp" alt="Success!" draggable="false" />
-            <h2>Job complete!</h2>
-        </div>
+    <div class="job-complete hidden">
+        <img src="fireworks.webp" alt="Success!" draggable="false" />
+        <h2>Job complete!</h2>
+    </div>
 
-        <div id="drop-area">
-            <p>Drop an image here</p>
-            <button id="file-btn">Upload Image</button>
-            <input type="file" id="file-input" accept="image/*" hidden />
-        </div>
+    <div id="drop-area">
+        <p>Drop an image here</p>
+        <button id="file-btn">Upload Image</button>
+        <input type="file" id="file-input" accept="image/*" hidden />
+    </div>
 
-        <div id="workspace" class="hidden">
-            <h3>Settings</h3>
-            <div class="workbench">
-                <div id="controls">
-                    <div class="aspect-container">
-                        <div class="aspect-selector">
-                            <label class="aspect-option">
-                                <input type="radio" name="aspect" value="1080x1440" checked />
-                                <span>3:4</span>
-                            </label>
-                            <label class="aspect-option">
-                                <input type="radio" name="aspect" value="1080x1350" />
-                                <span>4:5</span>
-                            </label>
-                            <label class="aspect-option">
-                                <input type="radio" name="aspect" value="1080x1080" />
-                                <span>1:1</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Columns grouped in a fieldset -->
-                    <div id="column-group">
-                        <div>Columns:</div>
-                        <button id="minus-col" type="button">−</button>
-                        <span id="col-count">3</span>
-                        <button id="plus-col" type="button">+</button>
+    <div id="workspace" class="hidden">
+        <div class="workbench">
+            <div id="controls">
+                <div class="aspect-container">
+                    <p>Ratio:</p>
+                    <div class="aspect-selector">
+                        <label class="aspect-option">
+                            <input type="radio" name="aspect" value="1080x1440" checked />
+                            <span>3:4</span>
+                        </label>
+                        <label class="aspect-option">
+                            <input type="radio" name="aspect" value="1080x1350" />
+                            <span>4:5</span>
+                        </label>
+                        <label class="aspect-option">
+                            <input type="radio" name="aspect" value="1080x1080" />
+                            <span>1:1</span>
+                        </label>
                     </div>
                 </div>
-                <p id="seam-success" class="warning success" hidden>✅ Everything looks good.</p>
-                <p
-                    id="seam-warning"
-                    class="warning critical"
-                    data-template="❌ You should use at least {n} columns."
-                    hidden></p>
-                <p id="seam-note" class="warning note" data-template="⚠️ You should use {n} columns." hidden></p>
 
-                <canvas id="preview"></canvas>
-                <div class="main-button-container">
-                    <div id="progress-container">
-                        <progress id="progress-bar" max="100" value="0"></progress>
-                    </div>
-                    <button id="split-btn" disabled>Split and download</button>
+                <!-- Columns grouped in a fieldset -->
+                <div id="column-group">
+                    <div>Columns:</div>
+                    <button id="minus-col" type="button">−</button>
+                    <span id="col-count">3</span>
+                    <button id="plus-col" type="button">+</button>
                 </div>
             </div>
+            <p id="seam-success" class="warning success" hidden>✅ Everything looks good.</p>
+            <p id="seam-warning" class="warning critical" data-template="❌ You should use at least {n} columns." hidden>
+            </p>
+            <p id="seam-note" class="warning note" data-template="⚠️ You should use {n} columns." hidden></p>
 
             <div class="preview-container">
-                <h3>Preview</h3>
                 <div id="slice-previews"></div>
-                <button id="reset-btn" type="button">Reset</button>
             </div>
+            <div class="main-button-container">
+                <div id="progress-container">
+                    <progress id="progress-bar" max="100" value="0"></progress>
+                </div>
+                <button id="split-btn" disabled>Download</button>
+            </div>
+            <button id="reset-btn" type="button">Start Over</button>
         </div>
+    </div>
 
-        <p class="legal">Dario Crisafulli ©2026 – Version 1.6</p>
-        <!-- Libraries -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.8.0/jszip.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-        <script src="script.js"></script>
-    </body>
+    <p class="legal">Dario Crisafulli ©2026 – Version 1.7</p>
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.8.0/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
 </html>

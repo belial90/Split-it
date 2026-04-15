@@ -4,7 +4,6 @@
 const dropArea = document.getElementById("drop-area");
 const fileInput = document.getElementById("file-input");
 const fileBtn = document.getElementById("file-btn");
-const preview = document.getElementById("preview");
 const minusCol = document.getElementById("minus-col");
 const plusCol = document.getElementById("plus-col");
 const colCount = document.getElementById("col-count");
@@ -23,7 +22,6 @@ const jobComplete = document.querySelector(".job-complete");
 
 let img = new Image();
 let columns = 3;
-const GUIDE_OVERFLOW = 80;
 
 // hide progress UI on load
 progressContainer.classList.remove("active");
@@ -106,7 +104,7 @@ function loadFile(file) {
     alert('Please select a valid image file.');
     return;
   }
-  
+
   const reader = new FileReader();
   reader.onload = () => {
     img.onload = () => {
@@ -123,7 +121,7 @@ function loadFile(file) {
       } else if (height === 1080) {
         aspectValue = "1080x1080"; // 1:1
       }
-      
+
       if (aspectValue) {
         const aspectRadio = document.querySelector(`input[name="aspect"][value="${aspectValue}"]`);
         if (aspectRadio) {
@@ -136,12 +134,10 @@ function loadFile(file) {
       colCount.textContent = columns;
       updateColumnButtons();
 
-      preview.width = img.naturalWidth;
-      preview.height = img.naturalHeight + 2 * GUIDE_OVERFLOW;
-
       // defer draw until layout is applied
       requestAnimationFrame(() => {
-        drawPreview();
+        updateSlicePreviews();
+        checkSeamlessSplitFeedback();
       });
 
       splitBtn.disabled = false;
@@ -161,52 +157,29 @@ function loadFile(file) {
   reader.readAsDataURL(file);
 }
 
-// --- Draw main preview + guides ---
-function drawPreview() {
-  preview.width = img.naturalWidth;
-  preview.height = img.naturalHeight + 2 * GUIDE_OVERFLOW;
-
-  const ctx = preview.getContext("2d");
-  const cs = getComputedStyle(preview);
-  const color = cs.getPropertyValue("--main-accent").trim() || "#000";
-  const gWidth = parseFloat(cs.getPropertyValue("--guide-width")) || 2;
-
-  const displayW = preview.clientWidth || preview.width;
-  const scaleFactor = preview.width / displayW;
-  const lineWidth = gWidth * scaleFactor;
-
-  ctx.clearRect(0, 0, preview.width, preview.height);
-  ctx.drawImage(img, 0, GUIDE_OVERFLOW, img.naturalWidth, img.naturalHeight);
-
-  ctx.strokeStyle = color;
-  ctx.lineWidth = lineWidth;
-
-  for (let i = 1; i < columns; i++) {
-    const x = (preview.width / columns) * i;
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, preview.height);
-    ctx.stroke();
-  }
-
-  updateSlicePreviews();
-  checkSeamlessSplitFeedback();
-}
-
 // --- Thumbnail previews ---
 function updateSlicePreviews() {
   previewContainer.innerHTML = "";
   const [w, h] = getAspectValue().split("x").map(Number);
   const sliceW = img.naturalWidth / columns;
   const sliceH = img.naturalHeight;
-  const thumbSize = 160;
+  const previewHeight = 220;
+  const pixelRatio = Math.max(1, window.devicePixelRatio || 1);
+  const renderScale = pixelRatio * 1.5;
+  const displayWidth = Math.round(previewHeight * (w / h));
+  const displayHeight = previewHeight;
 
   for (let i = 0; i < columns; i++) {
     const thumb = document.createElement("canvas");
-    thumb.width = thumbSize;
-    thumb.height = Math.round(thumbSize * (h / w));
+    thumb.style.width = `${displayWidth}px`;
+    thumb.style.height = `${displayHeight}px`;
+    thumb.width = Math.round(displayWidth * renderScale);
+    thumb.height = Math.round(displayHeight * renderScale);
 
     const tc = thumb.getContext("2d");
+    tc.imageSmoothingEnabled = true;
+    tc.imageSmoothingQuality = "high";
+
     const scale = Math.max(thumb.width / sliceW, thumb.height / sliceH);
     const dw = sliceW * scale;
     const dh = sliceH * scale;
@@ -223,7 +196,8 @@ minusCol.addEventListener("click", () => {
   if (columns > 2) {
     columns--;
     colCount.textContent = columns;
-    drawPreview();
+    updateSlicePreviews();
+    checkSeamlessSplitFeedback();
     updateColumnButtons();
   }
 });
@@ -231,7 +205,8 @@ plusCol.addEventListener("click", () => {
   if (columns < 10) {
     columns++;
     colCount.textContent = columns;
-    drawPreview();
+    updateSlicePreviews();
+    checkSeamlessSplitFeedback();
     updateColumnButtons();
   }
 });
@@ -242,7 +217,8 @@ document.querySelectorAll('input[name="aspect"]').forEach((radio) =>
     if (!img.src) return;
     columns = getRecommendedColumns();
     colCount.textContent = columns;
-    drawPreview();
+    updateSlicePreviews();
+    checkSeamlessSplitFeedback();
     updateColumnButtons();
   })
 );
@@ -302,10 +278,11 @@ resetBtn.addEventListener("click", () => {
   location.reload();
 });
 
-if ("serviceWorker" in navigator) {
+/* if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js").catch((error) => {
       console.error("Service worker registration failed:", error);
     });
   });
 }
+*/

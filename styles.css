@@ -23,12 +23,6 @@
 /* ─────────────────────────────────────────────────────────────────────────────
    ANIMATIONS
 ───────────────────────────────────────────────────────────────────────────── */
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @keyframes fadeBounce {
   0% {
     opacity: 0;
@@ -64,7 +58,7 @@ body {
 }
 .logo {
   width: 100%;
-  max-width: 40rem;
+  max-width: 30rem;
   text-align: center;
   margin: 5rem 0;
   transition: width 0.3s ease-out;
@@ -89,28 +83,9 @@ h2 {
   font-size: 0.9em;
   text-align: center;
 }
-h3 {
-  font-family: "Instrument Serif", serif;
-  text-align: center;
-  color: var(--main-dark);
-  font-weight: 500;
-  font-size: 2em;
-  margin-bottom: 1rem;
-}
 p {
   color: var(--main-dark);
   text-align: center;
-}
-
-textarea,
-input.text,
-input[type="text"],
-input[type="button"],
-input[type="submit"],
-.input-checkbox {
-  appearance: none;
-  -webkit-appearance: none;
-  border-radius: 0;
 }
 
 .hidden {
@@ -121,15 +96,23 @@ input[type="submit"],
    DESCRIPTION & VISIBILITY CLASSES
 ───────────────────────────────────────────────────────────────────────────── */
 #description {
-  max-width: 300px;
+  max-width: 600px;
   margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 #description.hidden {
   display: none;
   transform: translateY(-20px);
   pointer-events: none;
 }
-
+#description h1 {
+  font-size: 40px;
+  color: var(--main-dark);
+}
 /* ─────────────────────────────────────────────────────────────────────────────
    DROP AREA
 ───────────────────────────────────────────────────────────────────────────── */
@@ -139,11 +122,11 @@ input[type="submit"],
   max-width: 600px;
   padding: 2rem;
   text-align: center;
-  margin: 5rem auto;
+  margin: 2rem auto;
   border-radius: 50px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 30px;
   align-content: center;
   align-items: center;
   transition:
@@ -153,6 +136,7 @@ input[type="submit"],
 #drop-area button {
   margin: 0;
   width: max-content;
+  background-color: var(--main-light);
 }
 
 #drop-area.hidden {
@@ -164,6 +148,11 @@ input[type="submit"],
 #drop-area.dragover {
   border-color: #666;
   background-color: rgba(0, 0, 0, 0.05);
+}
+#drop-area p {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--main-dark);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -196,7 +185,7 @@ input[type="submit"],
   margin-bottom: 3rem;
   background-color: #ffffff79;
   box-shadow: 0 10px 30px var(--main-light);
-  padding: 10px 10px 0;
+  padding: 10px 10px;
   background-size: 20px 20px;
   background-position: -19px -19px;
 }
@@ -224,6 +213,11 @@ input[type="submit"],
   padding: 5px;
   vertical-align: middle;
   align-items: center;
+}
+.aspect-container p {  
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--main-dark);
 }
 
 .aspect-option {
@@ -265,7 +259,6 @@ input[type="submit"],
   align-items: center;
   margin-bottom: 1rem;
   padding: 10px;
-  box-shadow: 0 5px 10px var(--main-light);
   background-color: white;
   border-radius: 100px;
 }
@@ -276,7 +269,6 @@ input[type="submit"],
   color: var(--main-dark);
 }
 
-#controls select,
 #controls button {
   margin: 0 0.5rem;
 }
@@ -340,9 +332,7 @@ button:active {
   font-size: 20px;
   font-weight: 600;
   border-radius: 100px;
-  margin-top: 2rem;
   text-align: center;
-  margin-bottom: -40px;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -360,16 +350,6 @@ button:active {
 /* when .active is on, show it */
 #progress-container.active {
   display: flex;
-}
-
-/* spinner & progress-bar styles remain the same */
-.spinner {
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid rgba(0, 0, 0, 0.2);
-  border-top-color: rgba(0, 0, 0, 0.6);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
 }
 
 #progress-bar {
@@ -410,18 +390,10 @@ button:active {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   PREVIEW CANVAS & THUMBNAILS
+   PREVIEW THUMBNAILS
 ───────────────────────────────────────────────────────────────────────────── */
-#preview {
-  width: 100%;
-  height: auto;
-  display: block;
-
-  --guide-width: 3px;
-}
-
 .preview-container {
-  margin-bottom: 1rem;
+  margin: 0.5rem 0 1rem;
   text-align: center;
 }
 
@@ -429,31 +401,31 @@ button:active {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2px;
-  padding: 0.5rem;
+  gap: 5px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 #slice-previews canvas {
   flex: 0 0 auto;
-  width: 100px;
+  width: 170px;
   height: auto;
+  box-shadow: 0 4px 12px rgba(128, 108, 87, 0.14);
 }
 
 #slice-previews canvas:first-child {
-  border-radius: 10px 0 0 10px;
+  border-radius: 14px 4px 4px 14px;
 }
 #slice-previews canvas:last-child {
-  border-radius: 0 10px 10px 0;
+  border-radius: 4px 14px 14px 4px;
 }
 
 #slice-previews::-webkit-scrollbar {
-  height: 6px;
+  height: 8px;
 }
 #slice-previews::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 6px;
 }
 #slice-previews::-webkit-scrollbar-track {
   background: transparent;
@@ -484,6 +456,11 @@ button:active {
   width: max-content;
   padding: 10px 20px;
   color: #2e9717;
+}
+
+#reset-btn {
+  display: block;
+  margin: 0 auto;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
